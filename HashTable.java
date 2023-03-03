@@ -5,11 +5,20 @@ public class HashTable<T> {
     private int elemCount;
     private int tableSize;
     private Node<T>[] hashTable;
+    private double load = 0.75;
 
     public HashTable(int length){
         this.hashTable = new Node[length];
         this.elemCount = 0;
         this.tableSize = length;
+    }
+
+    public double getCurrentLoad(){
+        return (double)this.elemCount / this.tableSize;
+    }
+
+    public double getLoad(){
+        return this.load;
     }
 
     public int hash(T element){
@@ -64,7 +73,7 @@ public class HashTable<T> {
             result += "["+i+"]" + ": ";
             Node<T> hashPtr = hashTable[i];
             if(hashPtr == null){
-                result += "0";
+                result += "null";
             }
 //            else if(hashPtr.getNext() == null){
 //                result += hashPtr.getData() + " ";
@@ -82,18 +91,22 @@ public class HashTable<T> {
             }
             result += "\n";
         }
-        result += "Number of Elements: " + this.elemCount + "\n";
+        result += "Number of elements: " + this.elemCount + "\n";
         result += "HashTable size: " + this.tableSize + "\n";
+        result += "Load factor: " + this.getCurrentLoad() + "\n";
         return result;
     }
 
 //    public void resize(int newSize){
-//
+//      double the size
 //    }
 
-//    public void clear(){
-//
-//    }
+    public void clear(){
+        for(int i = 0; i < this.tableSize; i++){
+            this.hashTable[i] = null;
+        }
+        this.elemCount = 0;
+    }
 
 //    public void saveToFile(String fileName){
 //
@@ -111,6 +124,7 @@ public class HashTable<T> {
         System.out.println("    contains <element> : prints the index for the element");
         System.out.println("    add <element> : inserts the element into the HashTable");
         System.out.println("    print : prints the HashTable");
+        System.out.println("    clear : clears the current HashTable");
         System.out.println("    help : prints out the commands again");
         System.out.println("    quit : exits the program");
 
@@ -123,6 +137,13 @@ public class HashTable<T> {
             if(command[0].equals("print")){
                 System.out.println("Printing HashTable...\n");
                 System.out.println(h1);
+            }
+//            if(h1.getCurrentLoad() >= h1.getLoad()){
+//                System.out.println("Load factor is too big! Resizing HashTable...");
+//            }
+            else if(command[0].equals("clear")){
+                h1.clear();
+                System.out.println("Cleared the HashTable");
             }
             else if(command[0].equals("help")){
                 System.out.print(" \n");
