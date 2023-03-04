@@ -17,3 +17,4 @@ This is a *basic* implementation of a **HashTable**, *don't expect anything too 
  - `Switch` Statements
  - `Try-Catch` for input error handling
  - `PrintWriter` for saving to a file
+ - `StringBuilder` for `toString()` method
