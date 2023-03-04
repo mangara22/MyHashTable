@@ -1,12 +1,10 @@
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 public class HashTable<T> {
     private int elemCount;
-    private int tableSize;
+    private final int tableSize;
     private Node<T>[] hashTable;
-    private double load = 0.75;
 
     public HashTable(int length){
         this.hashTable = new Node[length];
@@ -18,10 +16,6 @@ public class HashTable<T> {
         return (double)this.elemCount / this.tableSize;
     }
 
-    public double getLoad(){
-        return this.load;
-    }
-
     public int hash(T element){
         String result = element.toString();
         int hashcode = 0;
@@ -31,37 +25,9 @@ public class HashTable<T> {
         return hashcode;
     }
 
-    public boolean add(T element){
-        int idx = hash(element);
-        Node<T> key = hashTable[idx];
-        if(key == null){ //first Node to add
-            hashTable[idx] = new Node<>(element, null);
-            this.elemCount++;
-        }
-        else{
-            while(key.getNext() != null){ //check for duplicates
-                if(key.getData().equals(element)){
-                    return false;
-                }
-                key = key.getNext();
-            }
-            if(!key.getData().equals(element)){ //add, double check for duplicates at end
-                key.setNext(new Node<>(element, null));
-                this.elemCount++;
-            }
-        }
-        return true;
-    }
-
     public int containsElem(T element){
         int idx = hash(element);
         Node<T> key = hashTable[idx];
-//        if(key == null){
-//            return -1;
-//        }
-//        else if(key.getNext() == null){
-//            return idx;
-//        }
         while(key != null){
             if(key.getData().equals(element)){
                 return idx;
@@ -71,76 +37,37 @@ public class HashTable<T> {
         return -1;
     }
 
-    public String toString(){
-        String result = "";
-        for(int i = 0; i < this.tableSize; i++){
-            result += "["+i+"]" + ": ";
-            Node<T> hashPtr = hashTable[i];
-            if(hashPtr == null){
-                result += "null";
-            }
-//            else if(hashPtr.getNext() == null){
-//                result += hashPtr.getData() + " ";
-//            }
-            else{
-                while(hashPtr != null){
-                    if(hashPtr.getNext() == null){
-                        result += hashPtr.getData() + "";
-                    }
-                    else{
-                        result += hashPtr.getData() + "-->";
-                    }
-                    hashPtr = hashPtr.getNext();
+    public void add(T element){
+        int idx = hash(element);
+        Node<T> key = hashTable[idx];
+        if(key == null){ //first Node to add
+            hashTable[idx] = new Node<>(element, null);
+            this.elemCount++;
+        }
+        else{
+            while(key.getNext() != null){ //check for duplicates
+                if(key.getData().equals(element)){
+                    return;
                 }
+                key = key.getNext();
             }
-            result += "\n";
+            if(!key.getData().equals(element)){ //add, double check for duplicates at end
+                key.setNext(new Node<>(element, null));
+                this.elemCount++;
+            }
         }
-        result += "Number of elements: " + this.elemCount + "\n";
-        result += "HashTable size: " + this.tableSize + "\n";
-        result += "Load factor: " + this.getCurrentLoad() + "\n";
-        return result;
     }
 
-//    public void resize(int newSize){
-//      double the size
-//    }
-
-    public void clear(){
-        for(int i = 0; i < this.tableSize; i++){
-            this.hashTable[i] = null;
-        }
-        this.elemCount = 0;
-    }
-
-    public boolean saveToFile(String fileName){
-        PrintWriter p = null;
-        try{
-            p = new PrintWriter(new File(fileName));
-        }
-        catch(Exception e){
-            System.out.println("Error with saving to " + fileName);
-            return false;
-        }
-        p.print(this);
-        p.close();
-        return true;
-
-    }
-
-    public boolean remove(T element){
-        int result = this.containsElem(element); //containsElem() either returns a -1 or the index of where the element is
+    public void remove(T element){
+        int result = this.hash(element);
         Node<T> tail = hashTable[result];
         Node<T> ptr = tail.getNext();
-        if(result == -1){
-            return false;
-        }
-        else if(tail.getData().equals(element)){
+        if(tail.getData().equals(element)){ //need to determine where to point next
             if(ptr == null){
                 hashTable[result] = null; //set tail to null, only one node at that index to remove
-                return true;
+                return;
             }
-            hashTable[result] = ptr;
-            return true;
+            hashTable[result] = ptr; //point to ptr and not tail
         }
         else{ //find the element to remove in the linked list
             while(!ptr.getData().equals(element)){
@@ -148,9 +75,60 @@ public class HashTable<T> {
                 ptr = ptr.getNext();
             }
             tail.setNext(ptr.getNext());
-            return true;
         }
     }
+
+    public boolean saveToFile(String fileName){
+        PrintWriter p;
+        try{
+            p = new PrintWriter(fileName);
+        }
+        catch(Exception e){
+            System.out.println("Error with saving to " + fileName);
+            return false;
+        }
+        p.print(this); //use HashTable's toString() to write (print) to file
+        p.close();
+        return true;
+    }
+
+    public String toString(){
+        StringBuilder result = new StringBuilder();
+        for(int i = 0; i < this.tableSize; i++){
+            result.append("[").append(i).append("]").append(": ");
+            Node<T> hashPtr = hashTable[i];
+            if(hashPtr == null){
+                result.append("NULL");
+            }
+            else{
+                while(hashPtr != null){
+                    if(hashPtr.getNext() == null){
+                        result.append(hashPtr.getData());
+                    }
+                    else{
+                        result.append(hashPtr.getData()).append("-->");
+                    }
+                    hashPtr = hashPtr.getNext();
+                }
+            }
+            result.append("\n");
+        }
+        result.append("Number of elements: ").append(this.elemCount).append("\n");
+        result.append("HashTable size: ").append(this.tableSize).append("\n");
+        result.append("Load factor: ").append(this.getCurrentLoad()).append("\n");
+        return result.toString();
+    }
+
+    public void clear(){
+        for(int i = 0; i < this.tableSize; i++){
+            hashTable[i] = null;
+        }
+        this.elemCount = 0;
+    }
+
+//    public void resize(int newSize){
+//      double the size
+//    }
 
     public static void runConsole(){
         Scanner s = new Scanner(System.in);
@@ -160,11 +138,11 @@ public class HashTable<T> {
         System.out.println("    contains <element> : prints the index for the element");
         System.out.println("    add <element> : inserts the element into the HashTable");
         System.out.println("    remove <element> : removes the element from the HashTable");
+        System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
         System.out.println("    print : prints the HashTable");
         System.out.println("    clear : clears the current HashTable");
-        System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
         System.out.println("    help : prints out the commands again");
-        System.out.println("    quit : exits the program");
+        System.out.println("    quit : exits the console");
         try {
             System.out.print("Please enter a size for your HashTable: ");
             int length = s.nextInt();
@@ -175,13 +153,13 @@ public class HashTable<T> {
                 command = s.nextLine().split(" ");
                 switch (command[0]) {
                     case "hashcode":
-                        System.out.println("<" + command[1] + ">'s hashcode: " + h1.hash(command[1]));
+                        System.out.println("<" + command[1] + ">'s hashcode is: " + h1.hash(command[1]));
                         break;
                     case "contains":
                         if (h1.containsElem(command[1]) == -1) {
-                            System.out.println("NOT FOUND");
+                            System.out.println("<" + command[1] + "> could not be found");
                         } else {
-                            System.out.println("<" + command[1] + ">'s index is: " + h1.containsElem(command[1]));
+                            System.out.println("<" + command[1] + "> is at index: " + h1.containsElem(command[1]));
                         }
                         break;
                     case "add":
@@ -193,10 +171,19 @@ public class HashTable<T> {
                         }
                         break;
                     case "remove":
-                        if (h1.remove(command[1])) {
+                        if (h1.containsElem(command[1]) != -1){
+                            h1.remove(command[1]);
                             System.out.println("<" + command[1] + "> was successfully removed");
                         } else {
-                            System.out.println("Element could not be removed");
+                            System.out.println("<" + command[1] + "> not found, cannot remove");
+                        }
+                        break;
+                    case "save":
+                        if (h1.saveToFile(command[1])){
+                            System.out.println("HashTable was successfully saved to <" + command[1] + ">");
+                        }
+                        else{
+                            System.out.println("HashTable could not be saved");
                         }
                         break;
                     case "print":
@@ -207,21 +194,14 @@ public class HashTable<T> {
                         h1.clear();
                         System.out.println("Cleared the HashTable");
                         break;
-                    case "save":
-                        if (h1.saveToFile(command[1])){
-                            System.out.println("HashTable was successfully saved to <" + command[1] + ">");
+                    case "load":
+                        if(h1.getCurrentLoad() > 0.75){
+                            System.out.println("Resizing the HashTable...");
                         }
                         else{
-                            System.out.println("HashTable could not be saved");
+                            System.out.println("Load factor is still good!");
                         }
                         break;
-//                    case "load":
-//                        if(h1.getCurrentLoad() > h1.getLoad()){
-//                            System.out.println("Resizing the HashTable...");
-//                        }
-//                        else{
-//                            System.out.println("Load factor is still good!");
-//                        }
                     case "help":
                         System.out.print(" \n");
                         System.out.println("----HashTable Console----\nCommands: ");
@@ -229,11 +209,11 @@ public class HashTable<T> {
                         System.out.println("    contains <element> : prints the index for the element");
                         System.out.println("    add <element> : inserts the element into the HashTable");
                         System.out.println("    remove <element> : removes the element from the HashTable");
+                        System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
                         System.out.println("    print : prints the HashTable");
                         System.out.println("    clear : clears the current HashTable");
-                        System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
                         System.out.println("    help : prints out the commands again");
-                        System.out.println("    quit : exits the program");
+                        System.out.println("    quit : exits the console");
                         break;
                     case "quit":
                         break inputLoop;
@@ -244,9 +224,11 @@ public class HashTable<T> {
             }
             System.out.println("Exiting the Console...");
         }
-        catch(InputMismatchException e){
-            System.out.println("Invalid command!");
-            //if user doesn't enter an int for HashTable length or only has one argument for a two argument command
+        catch(InputMismatchException e){ //if user doesn't enter an int for HashTable length
+            System.out.println("Please enter a number for the length!");
+        }
+        catch(ArrayIndexOutOfBoundsException e){ //only one argument for two argument command
+            System.out.println("Invalid number of arguments!");
         }
     }
 }
