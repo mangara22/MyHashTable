@@ -231,7 +231,7 @@ public class HashTable<T> {
                         System.out.println("Cleared the HashTable");
                         break;
                     case "help":
-                        System.out.print(" \n");
+                        System.out.print("Here are the commands...\n");
                         System.out.println("----HashTable Console----\nCommands: ");
                         System.out.println("    hashcode <element> : prints the hashcode for the given element");
                         System.out.println("    contains <element> : prints the index for the element");
