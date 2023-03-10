@@ -3,6 +3,9 @@
 ## Description:
 This is a *basic* implementation of a **HashTable**, *don't expect anything too fancy*.
 
+## Compile/Run:
+`javac HashTableConsole.java` --> `java HashTableConsole`
+
 ## Assumptions:
  - The user will not type in random letters for an argument in the console
  - The user will save their HashTable to a `.txt` file *only*
