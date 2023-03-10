@@ -1,5 +1,5 @@
 /*
-    Written by: Michael Angara
+    Written by: Michael Angara, March 2023
     Inspiration from: CSCI 1933 Project 5, CSCI 2021 Project 1 Problem 3
     What is this?: A basic implementation of a HashTable and a "console"
 */
@@ -19,10 +19,6 @@ public class HashTable<T> {
 
     public double getCurrentLoad(){
         return (double)this.elemCount / this.tableSize; //convert to double due to integer division
-    }
-
-    public int getTableSize() {
-        return tableSize;
     }
 
     public int hash(T element){
@@ -218,8 +214,7 @@ public class HashTable<T> {
                     case "load":
                         if(h1.getCurrentLoad() > 0.75){
                             System.out.println("Load factor is too big! Resizing the HashTable...");
-                            //TODO: what constant to resize by?
-                            h1.resize(h1.getTableSize() * 3);
+                            h1.resize(h1.tableSize * 3);
                             System.out.println("Printing the new HashTable...");
                             System.out.println(h1);
                         }
@@ -243,7 +238,7 @@ public class HashTable<T> {
                         System.out.println("    add <element> : inserts the element into the HashTable");
                         System.out.println("    remove <element> : removes the element from the HashTable");
                         System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
-                        System.out.println("    resize : resizes the HashTable based on the load factor");
+                        System.out.println("    load : resizes the HashTable if the load factor is too big");
                         System.out.println("    print : prints the HashTable");
                         System.out.println("    clear : clears the current HashTable");
                         System.out.println("    help : prints out the commands again");
