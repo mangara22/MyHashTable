@@ -10,6 +10,8 @@ public class HashTable<T> {
     private int elemCount;
     private int tableSize;
     private Node<T>[] hashTable;
+    private T firstAdded;
+    private T recentAdded;
 
     public HashTable(int length){
         this.hashTable = new Node[length];
@@ -43,6 +45,12 @@ public class HashTable<T> {
     }
 
     public void add(T element){
+        if(this.elemCount == 0){
+            this.firstAdded = element;
+        }
+        else{
+            this.recentAdded = element;
+        }
         int idx = hash(element);
         Node<T> key = hashTable[idx];
         if(key == null){ //first Node to add
@@ -144,6 +152,8 @@ public class HashTable<T> {
         result.append("Number of elements: ").append(this.elemCount).append("\n");
         result.append("HashTable size: ").append(this.tableSize).append("\n");
         result.append("Load factor: ").append(this.getCurrentLoad()).append("\n");
+        result.append("First element added: ").append("<"+this.firstAdded+">").append("\n");
+        result.append("Most recent element added: ").append("<"+this.recentAdded+">").append("\n");
         return result.toString();
     }
 
