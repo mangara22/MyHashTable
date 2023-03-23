@@ -1,7 +1,7 @@
 # MyHashTable
 
 ## Description:
-This is a *basic* implementation of a **HashTable**, *don't expect anything too fancy*.
+A *basic* implementation of a **HashTable**, *don't expect anything too fancy, other than chaining and keeping the load factor to be below 0.75*.
 
 ## Compile/Run:
 `javac HashTableConsole.java` --> `java HashTableConsole`
