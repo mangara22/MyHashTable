@@ -26,6 +26,9 @@ public class HashTable<T> {
     }
 
     public int hash(T element){
+        if(element == null){
+            return -1;
+        }
         String result = element.toString();
         int hashcode = 0;
         for(int i = 0; i < result.length(); i++) {
@@ -44,6 +47,9 @@ public class HashTable<T> {
     }
 
     public int containsElem(T element){
+        if(element == null){
+            return -1;
+        }
         int idx = hash(element);
         Node<T> key = hashTable[idx];
         while(key != null){
@@ -56,6 +62,9 @@ public class HashTable<T> {
     }
 
     public void add(T element){
+        if(element == null){
+            return;
+        }
         if(this.elemCount == 0){
             this.firstAdded = element;
         }
@@ -92,6 +101,9 @@ public class HashTable<T> {
     }
 
     public void remove(T element){
+        if(element == null){
+            return;
+        }
         int result = this.hash(element);
         Node<T> tail = hashTable[result];
         Node<T> ptr = tail.getNext();
