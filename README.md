@@ -4,7 +4,6 @@
 A *basic* implementation of a **HashTable**, *don't expect anything too fancy*.
  - Used **Linked Lists** for *separate chaining*
  - Implemented a resize method that makes the HashTable bigger based on a *load factor of 0.75*
- - Attempted to implement *open addressing*
 
 ## Compile/Run:
 `javac HashTableConsole.java` --> `java HashTableConsole`
