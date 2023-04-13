@@ -23,6 +23,18 @@ public class HashTable<T> {
         return (double)this.elemCount / this.tableSize;
     }
 
+    public int getTableSize(){
+        return this.tableSize;
+    }
+
+    public Node<T>[] getHashTable() {
+        return hashTable;
+    }
+
+    public int getElemCount() {
+        return elemCount;
+    }
+
     public int hash(T element){
         if(element == null){
             return -1;
