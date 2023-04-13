@@ -1,9 +1,10 @@
 # MyHashTable
 
 ## Description:
-A *basic* implementation of a **HashTable**, *don't expect anything too fancy*.
+A *basic* implementation of a **HashTable**.
  - Used **Linked Lists** for *separate chaining*
  - Implemented a resize method that makes the HashTable bigger based on a *load factor of 0.75*
+ - Contains a file named `HashTableTest.java` which utilizes **JUnit 5** for testing some of the methods
 
 ## Compile/Run:
 `javac HashTableConsole.java` --> `java HashTableConsole`
@@ -23,3 +24,4 @@ A *basic* implementation of a **HashTable**, *don't expect anything too fancy*.
  - `Try-Catch` for input error handling
  - `PrintWriter` for saving to a file
  - `StringBuilder` for printing
+ - `JUnit 5` for testing
