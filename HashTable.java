@@ -1,5 +1,5 @@
 /*
-    Written by: Michael Angara, March 2023
+    Written by: Michael Angara, started on March 2023
     Inspiration from: CSCI 1933 Project 5, CSCI 2021 Project 1 Problem 3
     What is this?: A basic implementation of a HashTable and a "console"
 */
@@ -12,17 +12,15 @@ public class HashTable<T> {
     private Node<T>[] hashTable;
     private T firstAdded;
     private T recentAdded;
-    private boolean hasNullSpot;
 
     public HashTable(int length){
         this.hashTable = new Node[length];
         this.elemCount = 0;
         this.tableSize = length;
-        this.hasNullSpot = true;
     }
 
     public double getCurrentLoad(){
-        return (double)this.elemCount / this.tableSize; //convert to double due to integer division
+        return (double)this.elemCount / this.tableSize;
     }
 
     public int hash(T element){
@@ -32,17 +30,8 @@ public class HashTable<T> {
         String result = element.toString();
         int hashcode = 0;
         for(int i = 0; i < result.length(); i++) {
-            hashcode = (193 * result.charAt(i) + result.length()) % this.tableSize; //use modulus to make sure number is within tableSize
+            hashcode = (193 * result.charAt(i) + result.length()) % this.tableSize; //make sure number is within tableSize
         }
-//this approach gives a different hashcode for the same value, but this HashTable does not allow duplicate elements
-//        if(hashTable[hashcode] != null && hashTable[hashcode].getNext() == null){
-//            for(int i = 0; i < tableSize; i++){
-//                if(hashTable[i] == null){
-//                    hashcode = i;
-//                    break;
-//                }
-//            }
-//        }
         return hashcode;
     }
 
@@ -76,17 +65,6 @@ public class HashTable<T> {
             this.elemCount++;
         }
         else{
-//this other approach mostly works, except for remove() as it doesn't change the original item's hashcode to be the index of the next open spot
-//            if(hasNullSpot){ //only do loop while there is open spots available
-//                for(int i = 0; i < this.tableSize; i++){ //open addressing, loop through to find null (open) spots
-//                    if(hashTable[i] == null){
-//                        hashTable[i] = new Node<>(element, null);
-//                        this.elemCount++;
-//                        return;
-//                    }
-//                }
-//                hasNullSpot = false;
-//            }
             while(key.getNext() != null){ //check for duplicates
                 if(key.getData().equals(element)){
                     return;
@@ -111,7 +89,6 @@ public class HashTable<T> {
             if(ptr == null){
                 hashTable[result] = null; //set tail to null, only one node at that index to remove
                 this.elemCount--;
-                this.hasNullSpot = true;
                 return;
             }
             this.elemCount--;
@@ -142,7 +119,7 @@ public class HashTable<T> {
     }
 
     public void resize(int newSize){
-        HashTable h2 = new HashTable(newSize); //make a new HashTable object
+        HashTable h2 = new HashTable(newSize);
         for(int i = 0; i < this.tableSize; i++){
             Node<T> key = this.hashTable[i];
             if(key == null){
@@ -156,7 +133,6 @@ public class HashTable<T> {
             }
         }
         //reassign "this" variables to the "h2" objects
-        this.hasNullSpot = true;
         this.elemCount = h2.elemCount;
         this.tableSize = h2.tableSize;
         this.hashTable = h2.hashTable;
@@ -196,7 +172,6 @@ public class HashTable<T> {
             hashTable[i] = null;
         }
         this.elemCount = 0;
-        this.hasNullSpot = true;
     }
 
     public static void runConsole(){
@@ -291,8 +266,6 @@ public class HashTable<T> {
                         break;
                     case "quit":
                         break inputLoop;
-//                    default:
-//                        System.out.println("Invalid command!");
                 }
                 System.out.print("HashTable>> ");
             }
