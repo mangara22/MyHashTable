@@ -42,9 +42,9 @@ public class HashTable<T> {
         String result = element.toString();
         int hashcode = 0;
         for(int i = 0; i < result.length(); i++) {
-            hashcode = (193 * result.charAt(i) + result.length()) % this.tableSize; //make sure number is within tableSize
+            hashcode = (98317 * result.charAt(i) + result.length());
         }
-        return hashcode;
+        return hashcode % this.tableSize; //make sure hashcode is within table bounds
     }
 
     public int containsElem(T element){
