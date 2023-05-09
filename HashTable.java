@@ -1,6 +1,5 @@
 /*
     Written by: Michael Angara, started on March 2023
-    Inspiration from: CSCI 1933 Project 5, CSCI 2021 Project 1 Problem 3
     What is this?: A basic implementation of a HashTable and a "console"
 */
 import java.io.PrintWriter;
