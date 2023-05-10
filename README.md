@@ -14,9 +14,6 @@ A *basic* implementation of a **HashTable**. *Made using IntelliJ*
  - The user will save their HashTable to a `.txt` file *only*
 
 ## Extra Things Used:
- - Java `Generics`
- - `Switch` Statements
- - `Try-Catch` for input error handling
- - `PrintWriter` for saving to a file
- - `StringBuilder` for printing
- - `JUnit 5` for testing
+ - Java Generics
+ - PrintWriter for saving to a file
+ - JUnit 5 for testing
