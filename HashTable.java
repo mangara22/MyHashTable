@@ -1,16 +1,18 @@
 /*
-    Written by: Michael Angara, started on March 2023
-    What is this?: A basic implementation of a HashTable and a "console"
+    Written by: Michael Angara, started in March 2023
+    What is this?: A basic implementation of a HashTable with a "console"
 */
 import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.text.DecimalFormat;
 public class HashTable<T> {
     private int elemCount;
     private int tableSize;
     private Node<T>[] hashTable;
     private T firstAdded;
     private T recentAdded;
+    private static final DecimalFormat dfRound = new DecimalFormat("0.00000"); //for rounding load factor
 
     public HashTable(int length){
         this.hashTable = new Node[length];
@@ -18,81 +20,68 @@ public class HashTable<T> {
         this.tableSize = length;
     }
 
-    public double getCurrentLoad(){
-        return (double)this.elemCount / this.tableSize;
-    }
+    public double getCurrentLoad() {return (double)this.elemCount / this.tableSize;}
 
-    public int getTableSize(){
-        return this.tableSize;
-    }
+    public int getTableSize() {return this.tableSize;}
 
-    public Node<T>[] getHashTable() {
-        return hashTable;
-    }
+    public Node<T>[] getHashTable() {return hashTable;}
 
-    public int getElemCount() {
-        return elemCount;
-    }
+    public int getElemCount() {return elemCount;}
+
+    public T getFirstAdded() {return firstAdded;}
+
+    public T getRecentAdded() {return recentAdded;}
 
     public int hash(T element){
-        if(element == null){
-            return -1;
-        }
+        if(element == null) return -1;
         String result = element.toString();
         int hashcode = 0;
         for(int i = 0; i < result.length(); i++) {
             hashcode = (98317 * result.charAt(i) + result.length());
+            hashcode += hashcode << 6 + hashcode << 16 - hashcode;
+            hashcode += hashcode << 5 * i;
+        }
+        if(hashcode < 0){
+            hashcode *= -1;
         }
         return hashcode % this.tableSize; //make sure hashcode is within table bounds
     }
 
     public int containsElem(T element){
-        if(element == null){
-            return -1;
-        }
+        if(element == null) return -1;
         int idx = hash(element);
         Node<T> key = hashTable[idx];
-        while(key != null){
+        for(; key != null; key = key.getNext()){
             if(key.getData().equals(element)){ //found the element
                 return idx;
             }
-            key = key.getNext();
         }
         return -1; //did not find element
     }
 
     public void add(T element){
-        if(element == null){
+        if(element == null || this.containsElem(element) != -1){ //check for null or duplicates
             return;
         }
-        if(this.elemCount == 0){
-            this.firstAdded = element;
-        }
+        if(this.elemCount == 0) this.firstAdded = element;
         this.recentAdded = element;
         int idx = hash(element);
         Node<T> key = hashTable[idx];
-        if(key == null){ //first Node to add
-            hashTable[idx] = new Node<>(element, null);
-            this.elemCount++;
-        }
+        Node<T> newNode = new Node<>(element, null);
+        if(key == null) hashTable[idx] = newNode; //first node to add
         else{
-            while(key.getNext() != null){ //check for duplicates
-                if(key.getData().equals(element)){
-                    return;
-                }
-                key = key.getNext();
-            }
-            if(!key.getData().equals(element)){ //add, double check for duplicates at end
-                key.setNext(new Node<>(element, null));
-                this.elemCount++;
-            }
+            for(; key.getNext() != null; key = key.getNext()){}
+            key.setNext(newNode); //chaining
+        }
+        this.elemCount++;
+        if(this.getCurrentLoad() > 0.75){
+            System.out.println("Load factor of " + dfRound.format(this.getCurrentLoad()) + " is too big! Resizing...");
+            this.resize(this.tableSize * 3);
         }
     }
 
     public void remove(T element){
-        if(element == null){
-            return;
-        }
+        if(element == null) return;
         int result = this.hash(element);
         Node<T> tail = hashTable[result];
         Node<T> ptr = tail.getNext();
@@ -106,10 +95,7 @@ public class HashTable<T> {
             hashTable[result] = ptr; //point to ptr and not tail
         }
         else{ //find the element to remove in the linked list
-            while(!ptr.getData().equals(element)){
-                tail = ptr;
-                ptr = ptr.getNext();
-            }
+            for(; !ptr.getData().equals(element); tail = ptr, ptr = ptr.getNext()) {}
             tail.setNext(ptr.getNext());
             this.elemCount--;
         }
@@ -133,14 +119,9 @@ public class HashTable<T> {
         HashTable h2 = new HashTable(newSize);
         for(int i = 0; i < this.tableSize; i++){
             Node<T> key = this.hashTable[i];
-            if(key == null){
-                h2.hashTable[i] = null;
-            }
+            if(key == null) h2.hashTable[i] = null;
             else{
-                while(key != null){
-                    h2.add(key.getData());
-                    key = key.getNext();
-                }
+                for(; key != null; key = key.getNext()) {h2.add(key.getData());}
             }
         }
         //reassign "this" variables to the "h2" objects
@@ -154,35 +135,32 @@ public class HashTable<T> {
         for(int i = 0; i < this.tableSize; i++){
             result.append("[").append(i).append("]").append(": ");
             Node<T> hashPtr = hashTable[i];
-            if(hashPtr == null){
-                result.append("NULL");
-            }
+            if(hashPtr == null) result.append("NULL");
             else{
-                while(hashPtr != null){
+                for(; hashPtr != null; hashPtr = hashPtr.getNext()){
                     if(hashPtr.getNext() == null){
                         result.append(hashPtr.getData());
                     }
                     else{
                         result.append(hashPtr.getData()).append("-->");
                     }
-                    hashPtr = hashPtr.getNext();
                 }
             }
             result.append("\n");
         }
         result.append("Number of elements: ").append(this.elemCount).append("\n");
         result.append("HashTable size: ").append(this.tableSize).append("\n");
-        result.append("Load factor: ").append(this.getCurrentLoad()).append("\n");
+        result.append("Load factor: ").append(dfRound.format(this.getCurrentLoad())).append("\n");
         result.append("First element added: ").append("<"+this.firstAdded+">").append("\n");
         result.append("Most recent element added: ").append("<"+this.recentAdded+">").append("\n");
         return result.toString();
     }
 
     public void clear(){
-        for(int i = 0; i < this.tableSize; i++){
-            hashTable[i] = null;
-        }
+        this.hashTable = new Node[this.tableSize];
         this.elemCount = 0;
+        this.firstAdded = null;
+        this.recentAdded = null;
     }
 
     public static void runConsole(){
@@ -194,7 +172,6 @@ public class HashTable<T> {
         System.out.println("    add <element> : inserts the element into the HashTable");
         System.out.println("    remove <element> : removes the element from the HashTable");
         System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
-        System.out.println("    load : resizes the HashTable if the load factor is too big");
         System.out.println("    print : prints the HashTable");
         System.out.println("    clear : clears the current HashTable");
         System.out.println("    help : prints out the commands again");
@@ -242,17 +219,6 @@ public class HashTable<T> {
                             System.out.println("HashTable could not be saved");
                         }
                         break;
-                    case "load":
-                        if(h1.getCurrentLoad() > 0.75){
-                            System.out.println("Load factor is too big! Resizing the HashTable...");
-                            h1.resize(h1.tableSize * 3);
-                            System.out.println("Printing the new HashTable...");
-                            System.out.println(h1);
-                        }
-                        else{
-                            System.out.println("Load factor is less than 0.75, still good!");
-                        }
-                        break;
                     case "print":
                         System.out.println("Printing the HashTable...");
                         System.out.println(h1);
@@ -269,7 +235,6 @@ public class HashTable<T> {
                         System.out.println("    add <element> : inserts the element into the HashTable");
                         System.out.println("    remove <element> : removes the element from the HashTable");
                         System.out.println("    save <filename.txt> : saves the HashTable to the given .txt file");
-                        System.out.println("    load : resizes the HashTable if the load factor is too big");
                         System.out.println("    print : prints the HashTable");
                         System.out.println("    clear : clears the current HashTable");
                         System.out.println("    help : prints out the commands again");
