@@ -13,11 +13,11 @@ public class HashTableTest {
 
     @BeforeEach
     void setUp() {
-        hashTable = new HashTable(250);
+        hashTable = new HashTable(500);
         random = new Random();
         string = new StringBuilder();
-        iterations = random.nextInt(500); //add iteration amount of words
-        wordLength = random.nextInt(10); //add wordLength letter words long
+        iterations = random.nextInt(1000); //add iteration amount of words
+        wordLength = random.nextInt(25); //add wordLength letter words long
     }
 
     @Test
@@ -29,12 +29,12 @@ public class HashTableTest {
                 string.append((char) random.nextInt(26));
             }
             String word = string.toString();
-            hashTable.add(word); //add word so that we can use contains to see if it was actually added
+            hashTable.add(word);
             assertEquals(hashTable.hash(word), hashTable.containsElem(word), "an added word isn't in the right spot!");
         }
         assertEquals(-1, hashTable.hash(null), "can't hash a null element!");
         assertEquals(-1, hashTable.containsElem(null), "can't check if a null element is in the HashTable!");
-        assertEquals(-1, hashTable.containsElem("test"), "found an element that isn't meant to be in the HashTable!");
+        assertEquals(-1, hashTable.containsElem("test"), "found an element that shouldn't be in the HashTable!");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class HashTableTest {
     }
 
     @Test
-    @DisplayName("Resize & Load Factor Test")
+    @DisplayName("Load Factor Test")
     @Order(3)
     void resizeAndLoadTest(){
         for(int i = 0; i < iterations; i++){
@@ -67,27 +67,31 @@ public class HashTableTest {
             String word = string.toString();
             hashTable.add(word);
         }
-        if(hashTable.getCurrentLoad() > 0.75){
-            hashTable.resize(hashTable.getTableSize() * 3);
-        }
         assertTrue(hashTable.getCurrentLoad() < 0.75, "load factor is still too big!");
     }
 
     @Test
-    @DisplayName("Clear Test")
+    @DisplayName("Clear & Added Equals Test")
     @Order(4)
     void clearTest(){
+        String word = "";
         for(int i = 0; i < iterations; i++){
             for(int j = 0; j < wordLength; j++){
                 string.append((char) random.nextInt(26));
             }
-            String word = string.toString();
+            word = string.toString();
             hashTable.add(word);
+            if(i == 0){
+                assertEquals(word, hashTable.getFirstAdded(), "First added element not equal!");
+            }
         }
+        assertEquals(word, hashTable.getRecentAdded(), "Recent added element not equal!");
         hashTable.clear();
         for(int k = 0; k < hashTable.getTableSize(); k++){
             assertNull(hashTable.getHashTable()[k], "HashTable not null!");
         }
         assertEquals(0, hashTable.getElemCount(), "HashTable doesn't have 0 elements!");
+        assertNull(hashTable.getFirstAdded(), "First added element not null!");
+        assertNull(hashTable.getRecentAdded(), "Recent added element not null!");
     }
 }
