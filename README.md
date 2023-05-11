@@ -1,13 +1,11 @@
 # MyHashTable
+- [Demo of Console and Tests](https://drive.google.com/drive/folders/18qTKtGnLcGSCVHjay1fEQHtiacX5W4Zb?usp=sharing)
 
 ## Description:
 A *basic* implementation of a **HashTable**. *Made using IntelliJ*
  - Used **Linked Lists** for *separate chaining*
  - Implemented a resize method that makes the HashTable bigger based on a *load factor of 0.75*
  - Contains a file named `HashTableTest.java` which utilizes **JUnit 5** for testing some of the methods
-
-## Compile/Run:
-`javac HashTableConsole.java` --> `java HashTableConsole`
 
 ## Assumptions:
  - The user will not type in random letters for an argument in the console
