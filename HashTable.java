@@ -38,8 +38,6 @@ public class HashTable<T> {
         int hashcode = 0;
         for(int i = 0; i < result.length(); i++) {
             hashcode = (98317 * result.charAt(i) + result.length());
-            hashcode += hashcode << 6 + hashcode << 16 - hashcode;
-            hashcode += hashcode << 5 * i;
         }
         if(hashcode < 0){
             hashcode *= -1;
@@ -138,12 +136,8 @@ public class HashTable<T> {
             if(hashPtr == null) result.append("NULL");
             else{
                 for(; hashPtr != null; hashPtr = hashPtr.getNext()){
-                    if(hashPtr.getNext() == null){
-                        result.append(hashPtr.getData());
-                    }
-                    else{
-                        result.append(hashPtr.getData()).append("-->");
-                    }
+                    String data = (hashPtr.getNext() == null) ? (String)hashPtr.getData() : hashPtr.getData() + "-->";
+                    result.append(data);
                 }
             }
             result.append("\n");
@@ -189,11 +183,8 @@ public class HashTable<T> {
                         System.out.println("<" + command[1] + ">'s hashcode is: " + h1.hash(command[1]));
                         break;
                     case "contains":
-                        if (h1.containsElem(command[1]) == -1) {
-                            System.out.println("<" + command[1] + "> could not be found");
-                        } else {
-                            System.out.println("<" + command[1] + "> is at index: " + h1.containsElem(command[1]));
-                        }
+                        String message = (h1.containsElem(command[1]) == -1) ? ("<" + command[1] + "> could not be found") : ("<" + command[1] + "> is at index: " + h1.containsElem(command[1]));
+                        System.out.println(message);
                         break;
                     case "add":
                         if (h1.containsElem(command[1]) != -1) {
@@ -212,12 +203,8 @@ public class HashTable<T> {
                         }
                         break;
                     case "save":
-                        if (h1.saveToFile(command[1])){
-                            System.out.println("HashTable was successfully saved to <" + command[1] + ">");
-                        }
-                        else{
-                            System.out.println("HashTable could not be saved");
-                        }
+                        String msg = (h1.saveToFile(command[1])) ? ("HashTable was successfully saved to <" + command[1] + ">") : ("HashTable could not be saved");
+                        System.out.println(msg);
                         break;
                     case "print":
                         System.out.println("Printing the HashTable...");
