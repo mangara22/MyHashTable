@@ -1,5 +1,4 @@
 # MyHashTable
-- [Demo of Console and Tests](https://drive.google.com/drive/folders/18qTKtGnLcGSCVHjay1fEQHtiacX5W4Zb?usp=sharing)
 
 ## Description:
 A *basic* implementation of a **HashTable**. *Made using IntelliJ*
