@@ -21,17 +21,17 @@ public class HashTable<T> {
     }
 
     public double getCurrentLoad() {return (double)this.elemCount / this.tableSize;}
-
     public int getTableSize() {return this.tableSize;}
-
     public Node<T>[] getHashTable() {return hashTable;}
-
     public int getElemCount() {return elemCount;}
-
     public T getFirstAdded() {return firstAdded;}
-
     public T getRecentAdded() {return recentAdded;}
 
+    /**
+     * gives a hashcode for an element
+     * @param element user input as a String
+     * @return the hashcode of the element that's within table bounds
+     */
     public int hash(T element){
         if(element == null) return -1;
         String result = element.toString();
@@ -45,6 +45,11 @@ public class HashTable<T> {
         return hashcode % this.tableSize; //make sure hashcode is within table bounds
     }
 
+    /**
+     * returns the index of the element, -1 if the element isn't in the table
+     * @param element the String to check
+     * @return index or -1
+     */
     public int containsElem(T element){
         if(element == null) return -1;
         int idx = hash(element);
@@ -57,6 +62,10 @@ public class HashTable<T> {
         return -1; //did not find element
     }
 
+    /**
+     * adds the element to the HashTable using chaining and resizes if necessary
+     * @param element the String to add
+     */
     public void add(T element){
         if(element == null || this.containsElem(element) != -1){ //check for null or duplicates
             return;
@@ -78,6 +87,10 @@ public class HashTable<T> {
         }
     }
 
+    /**
+     * removes the element from the HashTable
+     * @param element the String to remove
+     */
     public void remove(T element){
         if(element == null) return;
         int result = this.hash(element);
@@ -99,6 +112,11 @@ public class HashTable<T> {
         }
     }
 
+    /**
+     * saves the current HashTable toString() to a .txt file
+     * @param fileName the name of the .txt file the user wants
+     * @return boolean value if the saving was successful
+     */
     public boolean saveToFile(String fileName){
         PrintWriter p;
         try{
@@ -113,6 +131,10 @@ public class HashTable<T> {
         return true;
     }
 
+    /**
+     * resizes the HashTable by creating a bigger HashTable and adding all the original elements to the new table
+     * @param newSize the new table size
+     */
     public void resize(int newSize){
         HashTable h2 = new HashTable(newSize);
         for(int i = 0; i < this.tableSize; i++){
@@ -128,6 +150,10 @@ public class HashTable<T> {
         this.hashTable = h2.hashTable;
     }
 
+    /**
+     * toString() method of HashTable, also displays some stats
+     * @return the String representation of the HashTable
+     */
     public String toString(){
         StringBuilder result = new StringBuilder(); //using StringBuilder instead of string concatenation
         for(int i = 0; i < this.tableSize; i++){
@@ -150,6 +176,9 @@ public class HashTable<T> {
         return result.toString();
     }
 
+    /**
+     * clears the current HashTable by making a new one of the same size and resetting certain variables
+     */
     public void clear(){
         this.hashTable = new Node[this.tableSize];
         this.elemCount = 0;
@@ -157,6 +186,9 @@ public class HashTable<T> {
         this.recentAdded = null;
     }
 
+    /**
+     * runs the "console" via the terminal
+     */
     public static void runConsole(){
         Scanner s = new Scanner(System.in);
         String[] command;
