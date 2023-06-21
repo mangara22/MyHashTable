@@ -1,11 +1,12 @@
-/*
-    Written by: Michael Angara, started in March 2023
-    What is this?: A basic implementation of a HashTable with a "console"
-*/
 import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.text.DecimalFormat;
+
+/**
+ * @author Michael Angara
+ * @param <T> generic type T HashTable
+ */
 public class HashTable<T> {
     private int elemCount;
     private int tableSize;
